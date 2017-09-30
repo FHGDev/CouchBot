@@ -201,7 +201,9 @@ namespace MTD.DiscordBot.Modules
             var server = new DiscordServer();
 
             if (File.Exists(file))
+            {
                 server = JsonConvert.DeserializeObject<DiscordServer>(File.ReadAllText(file));
+            }
 
             var twitchId = await _twitchManager.GetTwitchIdByLogin(channelName);
 
@@ -493,20 +495,20 @@ namespace MTD.DiscordBot.Modules
         [Command("discover")]
         public async Task Discover(string discoveryType)
         {
-            discoveryType = discoveryType.ToLowerInvariant();
+            var discoveryTypeLower = discoveryType.ToLowerInvariant();
 
             if (!IsAdmin)
             {
                 return;
             }
 
-            if(discoveryType != "all" && discoveryType != "none" && discoveryType != "role")
+            if(discoveryTypeLower != "all" && discoveryTypeLower != "none" && discoveryTypeLower != "role")
             {
                 await Context.Channel.SendMessageAsync("The twitch discover command syntax is: ```!cb twitch discover [all/none/role] {roleName}\r\nPick one - all, none, or role.\r\nIf role, provide the role name to use. Do not tag the role, just provide the name.\r\n```");
                 return;
             }
 
-            if(discoveryType == "role")
+            if(discoveryTypeLower == "role")
             {
                 await Context.Channel.SendMessageAsync("Please provide the role name when selecting role as your discover option. (ie: !cb twitch discover role streamers. Do not tag the role.)");
                 return;
@@ -520,9 +522,9 @@ namespace MTD.DiscordBot.Modules
                 server = JsonConvert.DeserializeObject<DiscordServer>(File.ReadAllText(file));
             }
 
-            server.DiscoverTwitch = discoveryType;
+            server.DiscoverTwitch = discoveryTypeLower;
             await _fileService.SaveDiscordServer(server, Context.Guild);
-            await Context.Channel.SendMessageAsync("Discover Twitch has been set to '" + discoveryType + "'.");
+            await Context.Channel.SendMessageAsync("Discover Twitch has been set to '" + discoveryTypeLower + "'.");
         }
 
         [Command("discover")]
