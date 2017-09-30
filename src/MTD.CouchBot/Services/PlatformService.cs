@@ -156,9 +156,11 @@ namespace MTD.CouchBot.Services
                                             if (finalCheck == null || !finalCheck.Servers.Contains(server.Id))
                                             {
                                                 if (channel.ChannelMessages == null)
+                                                {
                                                     channel.ChannelMessages = new List<ChannelMessage>();
+                                                }
 
-                                                channel.ChannelMessages.AddRange(await _messagingService.SendMessages(Constants.Mobcrush, new List<BroadcastMessage>() { message }));
+                                                channel.ChannelMessages.AddRange(await _messagingService.SendMessages(Constants.Mobcrush, new List<BroadcastMessage> { message }));
 
                                                 File.WriteAllText(_botSettings.DirectorySettings.ConfigRootDirectory + _botSettings.DirectorySettings.LiveDirectory + _botSettings.DirectorySettings.MobcrushDirectory + mobcrushId + ".json", JsonConvert.SerializeObject(channel));
 
@@ -213,7 +215,6 @@ namespace MTD.CouchBot.Services
                     {
                         if (stream.IsLive)
                         {
-                            bool allowEveryone = server.AllowEveryone;
                             var chat = await _discordService.GetMessageChannel(server.Id, server.OwnerLiveChannel);
 
                             if (chat == null)
@@ -232,7 +233,7 @@ namespace MTD.CouchBot.Services
                                     {
                                         if (channel == null)
                                         {
-                                            channel = new LiveChannel()
+                                            channel = new LiveChannel
                                             {
                                                 Name = server.OwnerMobcrushId,
                                                 Servers = new List<ulong>()
@@ -263,9 +264,11 @@ namespace MTD.CouchBot.Services
                                         if (finalCheck == null || !finalCheck.Servers.Contains(server.Id))
                                         {
                                             if (channel.ChannelMessages == null)
+                                            {
                                                 channel.ChannelMessages = new List<ChannelMessage>();
+                                            }
 
-                                            channel.ChannelMessages.AddRange(await _messagingService.SendMessages(Constants.Mobcrush, new List<BroadcastMessage>() { message }));
+                                            channel.ChannelMessages.AddRange(await _messagingService.SendMessages(Constants.Mobcrush, new List<BroadcastMessage> { message }));
 
                                             File.WriteAllText(_botSettings.DirectorySettings.ConfigRootDirectory + _botSettings.DirectorySettings.LiveDirectory + _botSettings.DirectorySettings.MobcrushDirectory + server.OwnerMobcrushId + ".json", JsonConvert.SerializeObject(channel));
 
@@ -414,16 +417,16 @@ namespace MTD.CouchBot.Services
                                                 f.IsInline = true;
                                             });
 
-                                            string tags = "";
+                                            var tags = new StringBuilder();
                                             foreach (var t in stream.Tags)
                                             {
-                                                tags += t + ", ";
+                                                tags.Append(t + ", ");
                                             }
 
                                             embedBuilder.AddField(f =>
                                             {
                                                 f.Name = "Stream Tags";
-                                                f.Value = string.IsNullOrEmpty(tags.Trim().TrimEnd(',')) ? "None" : tags.Trim().TrimEnd(',');
+                                                f.Value = string.IsNullOrEmpty(tags.ToString().Trim().TrimEnd(',')) ? "None" : tags.ToString().Trim().TrimEnd(',');
                                                 f.IsInline = false;
                                             });
 
@@ -460,7 +463,7 @@ namespace MTD.CouchBot.Services
                                                 message += "**[Picarto]** " + server.LiveMessage.Replace("%CHANNEL%", stream.Name).Replace("%TITLE%", stream.Title).Replace("%URL%", "https://picarto.tv/" + stream.Name).Replace("%GAME%", stream.Category);
                                             }
 
-                                            var broadcastMessage = new BroadcastMessage()
+                                            var broadcastMessage = new BroadcastMessage
                                             {
                                                 GuildId = server.Id,
                                                 ChannelId = server.GoLiveChannel,
@@ -475,9 +478,11 @@ namespace MTD.CouchBot.Services
                                             if (finalCheck == null || !finalCheck.Servers.Contains(server.Id))
                                             {
                                                 if (channel.ChannelMessages == null)
+                                                {
                                                     channel.ChannelMessages = new List<ChannelMessage>();
+                                                }
 
-                                                channel.ChannelMessages.AddRange(await _messagingService.SendMessages(Constants.Picarto, new List<BroadcastMessage>() { broadcastMessage }));
+                                                channel.ChannelMessages.AddRange(await _messagingService.SendMessages(Constants.Picarto, new List<BroadcastMessage> { broadcastMessage }));
 
                                                 File.WriteAllText(_botSettings.DirectorySettings.ConfigRootDirectory + _botSettings.DirectorySettings.LiveDirectory + _botSettings.DirectorySettings.PicartoDirectory + picartoChannel + ".json", JsonConvert.SerializeObject(channel));
 
@@ -621,19 +626,6 @@ namespace MTD.CouchBot.Services
                                             f.IsInline = true;
                                         });
 
-                                        //string tags = "";
-                                        //foreach (var t in stream.Tags)
-                                        //{
-                                        //    tags += t + ", ";
-                                        //}
-
-                                        //embedBuilder.AddField(f =>
-                                        //{
-                                        //    f.Name = "Stream Tags";
-                                        //    f.Value = tags.Trim().TrimEnd(',');
-                                        //    f.IsInline = false;
-                                        //});
-
                                         var role = await _discordService.GetRoleByGuildAndId(server.Id, server.MentionRole);
                                         var roleName = "";
 
@@ -667,7 +659,7 @@ namespace MTD.CouchBot.Services
                                             message += "**[Picarto]** " + server.LiveMessage.Replace("%CHANNEL%", stream.Name).Replace("%TITLE%", stream.Title).Replace("%URL%", "https://picarto.tv/" + stream.Name).Replace("%GAME%", stream.Category);
                                         }
 
-                                        var broadcastMessage = new BroadcastMessage()
+                                        var broadcastMessage = new BroadcastMessage
                                         {
                                             GuildId = server.Id,
                                             ChannelId = server.GoLiveChannel,
@@ -682,9 +674,11 @@ namespace MTD.CouchBot.Services
                                         if (finalCheck == null || !finalCheck.Servers.Contains(server.Id))
                                         {
                                             if (channel.ChannelMessages == null)
+                                            {
                                                 channel.ChannelMessages = new List<ChannelMessage>();
+                                            }
 
-                                            channel.ChannelMessages.AddRange(await _messagingService.SendMessages(Constants.Picarto, new List<BroadcastMessage>() { broadcastMessage }));
+                                            channel.ChannelMessages.AddRange(await _messagingService.SendMessages(Constants.Picarto, new List<BroadcastMessage> { broadcastMessage }));
 
                                             File.WriteAllText(_botSettings.DirectorySettings.ConfigRootDirectory + _botSettings.DirectorySettings.LiveDirectory + _botSettings.DirectorySettings.PicartoDirectory + server.OwnerPicartoChannel + ".json", JsonConvert.SerializeObject(channel));
 
@@ -791,9 +785,11 @@ namespace MTD.CouchBot.Services
                                             if (finalCheck == null || !finalCheck.Servers.Contains(server.Id))
                                             {
                                                 if (channel.ChannelMessages == null)
+                                                {
                                                     channel.ChannelMessages = new List<ChannelMessage>();
+                                                }
 
-                                                channel.ChannelMessages.AddRange(await _messagingService.SendMessages(Constants.Smashcast, new List<BroadcastMessage>() { message }));
+                                                channel.ChannelMessages.AddRange(await _messagingService.SendMessages(Constants.Smashcast, new List<BroadcastMessage> { message }));
 
                                                 File.WriteAllText(_botSettings.DirectorySettings.ConfigRootDirectory + _botSettings.DirectorySettings.LiveDirectory + _botSettings.DirectorySettings.SmashcastDirectory + hitboxChannel + ".json", JsonConvert.SerializeObject(channel));
 
@@ -895,9 +891,11 @@ namespace MTD.CouchBot.Services
                                         if (finalCheck == null || !finalCheck.Servers.Contains(server.Id))
                                         {
                                             if (channel.ChannelMessages == null)
+                                            {
                                                 channel.ChannelMessages = new List<ChannelMessage>();
+                                            }
 
-                                            channel.ChannelMessages.AddRange(await _messagingService.SendMessages(Constants.Smashcast, new List<BroadcastMessage>() { message }));
+                                            channel.ChannelMessages.AddRange(await _messagingService.SendMessages(Constants.Smashcast, new List<BroadcastMessage> { message }));
 
                                             File.WriteAllText(_botSettings.DirectorySettings.ConfigRootDirectory + _botSettings.DirectorySettings.LiveDirectory + _botSettings.DirectorySettings.SmashcastDirectory + server.OwnerHitboxChannel + ".json", JsonConvert.SerializeObject(channel));
 
@@ -921,7 +919,6 @@ namespace MTD.CouchBot.Services
             var servers = _fileService.GetConfiguredServersWithLiveChannel();
             var liveChannels = _fileService.GetCurrentlyLiveTwitchChannels();
             var twitchChannelList = new List<TwitchChannelServerModel>();
-            var allTwitchIdsBuilder = new StringBuilder();
 
             foreach (var server in servers)
             {
@@ -1081,9 +1078,11 @@ namespace MTD.CouchBot.Services
                                     if (finalCheck == null || !finalCheck.Servers.Contains(server.Id))
                                     {
                                         if (channel.ChannelMessages == null)
+                                        {
                                             channel.ChannelMessages = new List<ChannelMessage>();
+                                        }
 
-                                        channel.ChannelMessages.AddRange(await _messagingService.SendMessages(Constants.Twitch, new List<BroadcastMessage>() { message }));
+                                        channel.ChannelMessages.AddRange(await _messagingService.SendMessages(Constants.Twitch, new List<BroadcastMessage> { message }));
 
                                         File.WriteAllText(_botSettings.DirectorySettings.ConfigRootDirectory + _botSettings.DirectorySettings.LiveDirectory + _botSettings.DirectorySettings.TwitchDirectory + stream.channel._id.ToString() + ".json",
                                             JsonConvert.SerializeObject(channel));
@@ -1269,9 +1268,11 @@ namespace MTD.CouchBot.Services
                                         if (finalCheck == null || !finalCheck.Servers.Contains(server.Id))
                                         {
                                             if (channel.ChannelMessages == null)
+                                            {
                                                 channel.ChannelMessages = new List<ChannelMessage>();
+                                            }
 
-                                            channel.ChannelMessages.AddRange(await _messagingService.SendMessages(Constants.Twitch, new List<BroadcastMessage>() { message }));
+                                            channel.ChannelMessages.AddRange(await _messagingService.SendMessages(Constants.Twitch, new List<BroadcastMessage> { message }));
 
                                             File.WriteAllText(_botSettings.DirectorySettings.ConfigRootDirectory + _botSettings.DirectorySettings.LiveDirectory + _botSettings.DirectorySettings.TwitchDirectory + stream.channel._id.ToString() + ".json",
                                                 JsonConvert.SerializeObject(channel));
@@ -1306,7 +1307,7 @@ namespace MTD.CouchBot.Services
 
                     if (gameServerModel == null)
                     {
-                        gameList.Add(new TwitchGameServerModel() { Name = g, Servers = new List<ulong>() { s.Id } });
+                        gameList.Add(new TwitchGameServerModel() { Name = g, Servers = new List<ulong> { s.Id } });
                     }
                     else
                     {
@@ -1409,9 +1410,11 @@ namespace MTD.CouchBot.Services
                             if (finalCheck == null || !finalCheck.Servers.Contains(server.Id))
                             {
                                 if (channel.ChannelMessages == null)
+                                {
                                     channel.ChannelMessages = new List<ChannelMessage>();
+                                }
 
-                                channel.ChannelMessages.AddRange(await _messagingService.SendMessages(Constants.Twitch, new List<BroadcastMessage>() { message }));
+                                channel.ChannelMessages.AddRange(await _messagingService.SendMessages(Constants.Twitch, new List<BroadcastMessage> { message }));
 
                                 File.WriteAllText(_botSettings.DirectorySettings.ConfigRootDirectory + _botSettings.DirectorySettings.LiveDirectory + _botSettings.DirectorySettings.TwitchDirectory + stream.channel._id.ToString() + ".json",
                                     JsonConvert.SerializeObject(channel));
@@ -1479,11 +1482,6 @@ namespace MTD.CouchBot.Services
                     continue;
                 }
 
-                if (twitchIds == null)
-                {
-                    continue;
-                }
-
                 foreach (var twitchId in twitchIds)
                 {
 
@@ -1520,7 +1518,7 @@ namespace MTD.CouchBot.Services
 
                     if (currentlyLive == null)
                     {
-                        currentlyLive = new LiveChannel()
+                        currentlyLive = new LiveChannel
                         {
                             Name = stream.channel._id.ToString(),
                             Servers = new List<ulong>()
@@ -1549,9 +1547,11 @@ namespace MTD.CouchBot.Services
                     if (finalCheck == null || !finalCheck.Servers.Contains(server.Id))
                     {
                         if (currentlyLive.ChannelMessages == null)
+                        {
                             currentlyLive.ChannelMessages = new List<ChannelMessage>();
+                        }
 
-                        currentlyLive.ChannelMessages.AddRange(await _messagingService.SendMessages(Constants.Twitch, new List<BroadcastMessage>() { message }));
+                        currentlyLive.ChannelMessages.AddRange(await _messagingService.SendMessages(Constants.Twitch, new List<BroadcastMessage> { message }));
 
                         File.WriteAllText(_botSettings.DirectorySettings.ConfigRootDirectory + _botSettings.DirectorySettings.LiveDirectory + _botSettings.DirectorySettings.TwitchDirectory + stream.channel._id.ToString() + ".json",
                             JsonConvert.SerializeObject(currentlyLive));
@@ -1575,27 +1575,27 @@ namespace MTD.CouchBot.Services
             var allTwitchIds = allTwitchIdsBuilder.ToString().TrimEnd(',');
             var splitList = allTwitchIds.Split(',');
 
-            var list = "";
+            var list = new StringBuilder();
 
             for (int i = 0; i < splitList.Length; i++)
             {
-                list += splitList[i] + ",";
+                list.Append(splitList[i] + ",");
 
                 if (i % 100 == 0 && i != 0)
                 {
-                    list = list.TrimEnd(',');
+                    var sublist = list.ToString().TrimEnd(',');
 
-                    lists.Add(list);
+                    lists.Add(sublist);
 
-                    list = "";
+                    list.Clear();
                 }
             }
 
-            if (!string.IsNullOrEmpty(list))
+            if (!string.IsNullOrEmpty(list.ToString()))
             {
-                list = list.TrimEnd(',');
+                var sublist = list.ToString().TrimEnd(',');
 
-                lists.Add(list);
+                lists.Add(sublist);
             }
 
             return lists;
@@ -1610,7 +1610,6 @@ namespace MTD.CouchBot.Services
             var servers = _fileService.GetConfiguredServersWithLiveChannel();
             var liveChannels = _fileService.GetCurrentlyLiveTwitchChannels();
             var youtubeChannelList = new List<YouTubeChannelServerModel>();
-            var allYouTubeChannelIdsBuilder = new StringBuilder();
 
             foreach (var server in servers)
             {
@@ -1808,9 +1807,11 @@ namespace MTD.CouchBot.Services
                             if (finalCheck == null || !finalCheck.Servers.Contains(server.Id))
                             {
                                 if (channel.ChannelMessages == null)
+                                {
                                     channel.ChannelMessages = new List<ChannelMessage>();
+                                }
 
-                                channel.ChannelMessages.AddRange(await _messagingService.SendMessages(Constants.YouTubeGaming, new List<BroadcastMessage>() { message }));
+                                channel.ChannelMessages.AddRange(await _messagingService.SendMessages(Constants.YouTubeGaming, new List<BroadcastMessage> { message }));
                                 Logging.LogYouTubeGaming(channelTitle + " has gone online.");
                                 File.WriteAllText(_botSettings.DirectorySettings.ConfigRootDirectory + _botSettings.DirectorySettings.LiveDirectory + _botSettings.DirectorySettings.YouTubeDirectory + item.Snippet.ChannelId + ".json", JsonConvert.SerializeObject(channel));
                             }
@@ -1976,8 +1977,8 @@ namespace MTD.CouchBot.Services
 
                         Logging.LogYouTube(video.snippet.channelTitle + " has published a new video.");
 
-                        await _messagingService.SendMessages(Constants.YouTube, new List<BroadcastMessage>() {
-                                new BroadcastMessage()
+                        await _messagingService.SendMessages(Constants.YouTube, new List<BroadcastMessage> {
+                                new BroadcastMessage
                                 {
                                     GuildId = server.Id,
                                     ChannelId = server.PublishedChannel,
@@ -1996,7 +1997,6 @@ namespace MTD.CouchBot.Services
         public async Task CheckOwnerPublishedYouTube()
         {
             var servers = _fileService.GetConfiguredServers();
-            var users = _fileService.GetConfiguredUsers();
             var now = DateTime.UtcNow;
             var then = now.AddMilliseconds(-(_botSettings.IntervalSettings.YouTubePublished));
 
@@ -2137,8 +2137,8 @@ namespace MTD.CouchBot.Services
 
                     Logging.LogYouTube(video.snippet.channelTitle + " has published a new video.");
 
-                    await _messagingService.SendMessages(Constants.YouTube, new List<BroadcastMessage>() {
-                                new BroadcastMessage()
+                    await _messagingService.SendMessages(Constants.YouTube, new List<BroadcastMessage> {
+                                new BroadcastMessage
                                 {
                                     GuildId = server.Id,
                                     ChannelId = server.OwnerPublishedChannel,
@@ -2340,8 +2340,8 @@ namespace MTD.CouchBot.Services
 
                         Logging.LogVidMe(video.user.username + " has published a new video.");
 
-                        await _messagingService.SendMessages(Constants.VidMe, new List<BroadcastMessage>() {
-                                new BroadcastMessage()
+                        await _messagingService.SendMessages(Constants.VidMe, new List<BroadcastMessage> {
+                                new BroadcastMessage
                                 {
                                     GuildId = server.Id,
                                     ChannelId = server.PublishedChannel,
@@ -2494,8 +2494,8 @@ namespace MTD.CouchBot.Services
 
                     Logging.LogVidMe(video.user.username + " has published a new video.");
 
-                    await _messagingService.SendMessages(Constants.VidMe, new List<BroadcastMessage>() {
-                                new BroadcastMessage()
+                    await _messagingService.SendMessages(Constants.VidMe, new List<BroadcastMessage> {
+                                new BroadcastMessage
                                 {
                                     GuildId = server.Id,
                                     ChannelId = server.OwnerPublishedChannel,
@@ -2535,7 +2535,7 @@ namespace MTD.CouchBot.Services
 
                         if (liveStream == null || liveStream.stream == null)
                         {
-                            await CleanupMessages(stream.ChannelMessages);
+                            await CleanupMessages(stream.ChannelMessages).ConfigureAwait(false);
 
                             File.Delete(_botSettings.DirectorySettings.ConfigRootDirectory + _botSettings.DirectorySettings.LiveDirectory + _botSettings.DirectorySettings.TwitchDirectory + stream.Name + ".json");
                         }
@@ -2695,7 +2695,9 @@ namespace MTD.CouchBot.Services
                     var serverFile = _fileService.GetConfiguredServers().FirstOrDefault(x => x.Id == message.GuildId);
 
                     if (serverFile == null)
+                    {
                         continue;
+                    }
 
                     if (serverFile.DeleteWhenOffline)
                     {

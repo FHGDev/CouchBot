@@ -19,7 +19,7 @@ namespace MTD.CouchBot.Dals.Implementations
         {
             var query = "INSERT INTO `alertlog`(`Platform`, `GuildId`, `CreatedDate`) VALUES ('" + platform + "','" + guildId + "','" + DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") + "')";
 
-            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionStrings.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();

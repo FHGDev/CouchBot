@@ -15,7 +15,7 @@ namespace MTD.CouchBot.Domain.Models.Bot
         [JsonProperty("Intervals")]
         public Intervals IntervalSettings { get; set; }
         [JsonProperty("ConnectionStrings")]
-        public ConnectionStrings ConnectionString {get;set;}
+        public ConnectionString ConnectionStrings {get;set;}
 
         public class Keys
         {
@@ -72,7 +72,7 @@ namespace MTD.CouchBot.Domain.Models.Bot
             public int Mobcrush { get; set; }
         }
 
-        public class ConnectionStrings
+        public class ConnectionString
         {
             public string BotContext { get; set; }
         }
