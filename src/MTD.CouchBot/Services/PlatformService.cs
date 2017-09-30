@@ -1307,7 +1307,7 @@ namespace MTD.CouchBot.Services
 
                     if (gameServerModel == null)
                     {
-                        gameList.Add(new TwitchGameServerModel() { Name = g, Servers = new List<ulong> { s.Id } });
+                        gameList.Add(new TwitchGameServerModel { Name = g, Servers = new List<ulong> { s.Id } });
                     }
                     else
                     {
