@@ -106,7 +106,6 @@ namespace MTD.CouchBot.Services
                         {
                             if (stream.IsLive)
                             {
-                                bool allowEveryone = server.AllowEveryone;
                                 var chat = await _discordService.GetMessageChannel(server.Id, server.GoLiveChannel);
 
                                 if (chat == null)
@@ -125,7 +124,7 @@ namespace MTD.CouchBot.Services
                                         {
                                             if (channel == null)
                                             {
-                                                channel = new LiveChannel()
+                                                channel = new LiveChannel
                                                 {
                                                     Name = mobcrushId,
                                                     Servers = new List<ulong>()
@@ -328,7 +327,6 @@ namespace MTD.CouchBot.Services
                         {
                             if (stream.Online)
                             {
-                                bool allowEveryone = server.AllowEveryone;
                                 var chat = await _discordService.GetMessageChannel(server.Id, server.GoLiveChannel);
 
                                 if (chat == null)
@@ -347,7 +345,7 @@ namespace MTD.CouchBot.Services
                                         {
                                             if (channel == null)
                                             {
-                                                channel = new LiveChannel()
+                                                channel = new LiveChannel
                                                 {
                                                     Name = picartoChannel,
                                                     Servers = new List<ulong>()
@@ -537,7 +535,6 @@ namespace MTD.CouchBot.Services
                     {
                         if (stream.Online)
                         {
-                            bool allowEveryone = server.AllowEveryone;
                             var chat = await _discordService.GetMessageChannel(server.Id, server.OwnerLiveChannel);
 
                             if (chat == null)
@@ -556,7 +553,7 @@ namespace MTD.CouchBot.Services
                                     {
                                         if (channel == null)
                                         {
-                                            channel = new LiveChannel()
+                                            channel = new LiveChannel
                                             {
                                                 Name = server.OwnerPicartoChannel,
                                                 Servers = new List<ulong>()
@@ -738,7 +735,6 @@ namespace MTD.CouchBot.Services
                         {
                             if (stream.livestream[0].media_is_live == "1")
                             {
-                                bool allowEveryone = server.AllowEveryone;
                                 var chat = await _discordService.GetMessageChannel(server.Id, server.GoLiveChannel);
 
                                 if (chat == null)
@@ -757,7 +753,7 @@ namespace MTD.CouchBot.Services
                                         {
                                             if (channel == null)
                                             {
-                                                channel = new LiveChannel()
+                                                channel = new LiveChannel
                                                 {
                                                     Name = hitboxChannel,
                                                     Servers = new List<ulong>()
@@ -844,7 +840,6 @@ namespace MTD.CouchBot.Services
                     {
                         if (stream.livestream[0].media_is_live == "1")
                         {
-                            bool allowEveryone = server.AllowEveryone;
                             var chat = await _discordService.GetMessageChannel(server.Id, server.OwnerLiveChannel);
 
                             if (chat == null)
@@ -863,7 +858,7 @@ namespace MTD.CouchBot.Services
                                     {
                                         if (channel == null)
                                         {
-                                            channel = new LiveChannel()
+                                            channel = new LiveChannel
                                             {
                                                 Name = server.OwnerHitboxChannel,
                                                 Servers = new List<ulong>()
@@ -1049,7 +1044,7 @@ namespace MTD.CouchBot.Services
                                 {
                                     if (channel == null)
                                     {
-                                        channel = new LiveChannel()
+                                        channel = new LiveChannel
                                         {
                                             Name = stream.channel._id.ToString(),
                                             Servers = new List<ulong>()
@@ -1239,7 +1234,7 @@ namespace MTD.CouchBot.Services
                                     {
                                         if (channel == null)
                                         {
-                                            channel = new LiveChannel()
+                                            channel = new LiveChannel
                                             {
                                                 Name = stream.channel._id.ToString(),
                                                 Servers = new List<ulong>()
@@ -1381,7 +1376,7 @@ namespace MTD.CouchBot.Services
                         {
                             if (channel == null)
                             {
-                                channel = new LiveChannel()
+                                channel = new LiveChannel
                                 {
                                     Name = stream.channel._id.ToString(),
                                     Servers = new List<ulong>()
@@ -1758,7 +1753,7 @@ namespace MTD.CouchBot.Services
 
                             if (channel == null)
                             {
-                                channel = new LiveChannel()
+                                channel = new LiveChannel
                                 {
                                     Name = item.Snippet.ChannelId,
                                     Servers = new List<ulong>()
@@ -2166,27 +2161,27 @@ namespace MTD.CouchBot.Services
             var allYouTubeIds = allYouTubeIdsBuilder.ToString().TrimEnd(',');
             var splitList = allYouTubeIds.Split(',');
 
-            var list = "";
+            var list = new StringBuilder();
 
             for (int i = 0; i < splitList.Length; i++)
             {
-                list += splitList[i] + ",";
+                list.Append(splitList[i] + ",");
 
                 if (i % 100 == 0 && i != 0)
                 {
-                    list = list.TrimEnd(',');
+                    var sublist = list.ToString().TrimEnd(',');
 
-                    lists.Add(list);
+                    lists.Add(sublist);
 
-                    list = "";
+                    list.Clear();
                 }
             }
 
-            if (!string.IsNullOrEmpty(list))
+            if (!string.IsNullOrEmpty(list.ToString()))
             {
-                list = list.TrimEnd(',');
+                var sublist = list.ToString().TrimEnd(',');
 
-                lists.Add(list);
+                lists.Add(sublist);
             }
 
             return lists;
@@ -2199,7 +2194,6 @@ namespace MTD.CouchBot.Services
         public async Task CheckVidMe()
         {
             var servers = _fileService.GetConfiguredServers();
-            var users = _fileService.GetConfiguredUsers();
             var now = DateTime.UtcNow;
             var then = now.AddMilliseconds(-(_botSettings.IntervalSettings.VidMe));
 
@@ -2360,7 +2354,6 @@ namespace MTD.CouchBot.Services
         public async Task CheckOwnerVidMe()
         {
             var servers = _fileService.GetConfiguredServers();
-            var users = _fileService.GetConfiguredUsers();
             var now = DateTime.UtcNow;
             var then = now.AddMilliseconds(-(_botSettings.IntervalSettings.VidMe));
 
@@ -2571,7 +2564,7 @@ namespace MTD.CouchBot.Services
                         {
                             var file = _botSettings.DirectorySettings.ConfigRootDirectory + _botSettings.DirectorySettings.LiveDirectory + _botSettings.DirectorySettings.YouTubeDirectory + stream.Name + ".json";
 
-                            await CleanupMessages(stream.ChannelMessages);
+                            await CleanupMessages(stream.ChannelMessages).ConfigureAwait(false);
 
                             File.Delete(file);
                         }
@@ -2605,7 +2598,7 @@ namespace MTD.CouchBot.Services
 
                         if (liveStream == null || liveStream.livestream == null || liveStream.livestream.Count < 1 || liveStream.livestream[0].media_is_live == "0")
                         {
-                            await CleanupMessages(stream.ChannelMessages);
+                            await CleanupMessages(stream.ChannelMessages).ConfigureAwait(false);
 
                             File.Delete(_botSettings.DirectorySettings.ConfigRootDirectory + _botSettings.DirectorySettings.LiveDirectory + _botSettings.DirectorySettings.SmashcastDirectory + stream.Name + ".json");
                         }
@@ -2639,7 +2632,7 @@ namespace MTD.CouchBot.Services
 
                         if (liveStream == null || !liveStream.Online)
                         {
-                            await CleanupMessages(stream.ChannelMessages);
+                            await CleanupMessages(stream.ChannelMessages).ConfigureAwait(false);
 
                             File.Delete(_botSettings.DirectorySettings.ConfigRootDirectory + _botSettings.DirectorySettings.LiveDirectory + _botSettings.DirectorySettings.PicartoDirectory + stream.Name + ".json");
                         }
@@ -2673,7 +2666,7 @@ namespace MTD.CouchBot.Services
 
                         if (liveStream == null || !liveStream.IsLive)
                         {
-                            await CleanupMessages(stream.ChannelMessages);
+                            await CleanupMessages(stream.ChannelMessages).ConfigureAwait(false);
 
                             File.Delete(_botSettings.DirectorySettings.ConfigRootDirectory + _botSettings.DirectorySettings.LiveDirectory + _botSettings.DirectorySettings.MobcrushDirectory + stream.Name + ".json");
                         }
