@@ -15,7 +15,7 @@ namespace MTD.CouchBot.Domain.Models.Bot
         [JsonProperty("Intervals")]
         public Intervals IntervalSettings { get; set; }
         [JsonProperty("ConnectionStrings")]
-        public ConnectionStrings ConnectionStrings {get;set;}
+        public ConnectionStrings ConnectionString {get;set;}
 
         public class Keys
         {

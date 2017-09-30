@@ -1,4 +1,5 @@
-﻿using MTD.CouchBot.Domain.Models.Bot;
+﻿using Microsoft.Extensions.Options;
+using MTD.CouchBot.Domain.Models.Bot;
 using MySql.Data.MySqlClient;
 using System;
 using System.Threading.Tasks;
@@ -7,14 +8,19 @@ namespace MTD.CouchBot.Dals.Implementations
 {
     public class StatisticsDal : IStatisticsDal
     {
-        string MyConnection2 = "";
+        private readonly BotSettings _botSettings;
+
+        public StatisticsDal(IOptions<BotSettings> botSettings)
+        {
+            _botSettings = botSettings.Value;
+        }
 
         public async Task<BotStats> GetBotStats()
         {
             BotStats stats = null;
             string query = "SELECT * FROM BotStats where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -60,7 +66,7 @@ namespace MTD.CouchBot.Dals.Implementations
                 ",`LoggingStartDate`='" + stats.LoggingStartDate + 
                 "',`LastRestart`='" + stats.LastRestart.ToString("yyyy-MM-dd HH:mm:ss") + "' WHERE Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(Query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -81,7 +87,7 @@ namespace MTD.CouchBot.Dals.Implementations
 
             string query = "Update BotStats SET `MixerAlertCount`=" + current + " where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -103,7 +109,7 @@ namespace MTD.CouchBot.Dals.Implementations
 
             string query = "Update BotStats SET `SmashcastAlertCount`=" + current + " where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -125,7 +131,7 @@ namespace MTD.CouchBot.Dals.Implementations
 
             string query = "Update BotStats SET `PicartoAlertCount`=" + current + " where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -147,7 +153,7 @@ namespace MTD.CouchBot.Dals.Implementations
 
             string query = "Update BotStats SET `TwitchAlertCount`=" + current + " where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -169,7 +175,7 @@ namespace MTD.CouchBot.Dals.Implementations
 
             string query = "Update BotStats SET `YouTubeAlertCount`=" + current + " where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -191,7 +197,7 @@ namespace MTD.CouchBot.Dals.Implementations
 
             string query = "Update BotStats SET `UptimeMinutes`=" + current + " where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -210,7 +216,7 @@ namespace MTD.CouchBot.Dals.Implementations
         {
             string query = "SELECT MixerAlertCount FROM BotStats where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -232,7 +238,7 @@ namespace MTD.CouchBot.Dals.Implementations
         {
             string query = "SELECT SmashcastAlertCount FROM BotStats where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -254,7 +260,7 @@ namespace MTD.CouchBot.Dals.Implementations
         {
             string query = "SELECT TwitchAlertCount FROM BotStats where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -276,7 +282,7 @@ namespace MTD.CouchBot.Dals.Implementations
         {
             string query = "SELECT UptimeMinutes FROM BotStats where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -298,7 +304,7 @@ namespace MTD.CouchBot.Dals.Implementations
         {
             string query = "SELECT YouTubeAlertCount FROM BotStats where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -320,7 +326,7 @@ namespace MTD.CouchBot.Dals.Implementations
         {
             string query = "SELECT HaiBaiCount FROM BotStats where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -342,7 +348,7 @@ namespace MTD.CouchBot.Dals.Implementations
         {
             string query = "Update BotStats SET `LastRestart`='" + DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") + "' where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -364,7 +370,7 @@ namespace MTD.CouchBot.Dals.Implementations
 
             string query = "Update BotStats SET `HaiBaiCount`=" + current + " where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -386,7 +392,7 @@ namespace MTD.CouchBot.Dals.Implementations
 
             string query = "Update BotStats SET `FlipCount`=" + current + " where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -405,7 +411,7 @@ namespace MTD.CouchBot.Dals.Implementations
         {
             string query = "SELECT FlipCount FROM BotStats where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -430,7 +436,7 @@ namespace MTD.CouchBot.Dals.Implementations
 
             string query = "Update BotStats SET `UnflipCount`=" + current + " where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -449,7 +455,7 @@ namespace MTD.CouchBot.Dals.Implementations
         {
             string query = "SELECT UnflipCount FROM BotStats where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -474,7 +480,7 @@ namespace MTD.CouchBot.Dals.Implementations
 
             string query = "Update BotStats SET `VidMeAlertCount`=" + current + " where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -493,7 +499,7 @@ namespace MTD.CouchBot.Dals.Implementations
         {
             string query = "SELECT VidMeAlertCount FROM BotStats where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -515,7 +521,7 @@ namespace MTD.CouchBot.Dals.Implementations
         {
             string query = "SELECT PicartoAlertCount FROM BotStats where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -540,7 +546,7 @@ namespace MTD.CouchBot.Dals.Implementations
 
             string query = "Update BotStats SET `MobcrushAlertCount`=" + current + " where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
@@ -559,7 +565,7 @@ namespace MTD.CouchBot.Dals.Implementations
         {
             string query = "SELECT MobcrushAlertCount FROM BotStats where Id = 1";
 
-            MySqlConnection MyConn2 = new MySqlConnection(MyConnection2);
+            MySqlConnection MyConn2 = new MySqlConnection(_botSettings.ConnectionString.BotContext);
             MySqlCommand MyCommand2 = new MySqlCommand(query, MyConn2);
             MySqlDataReader MyReader2;
             MyConn2.Open();
