@@ -10,6 +10,7 @@ using MTD.CouchBot.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -54,15 +55,21 @@ namespace MTD.DiscordBot.Modules
             var server = new DiscordServer();
 
             if (File.Exists(file))
+            {
                 server = JsonConvert.DeserializeObject<DiscordServer>(File.ReadAllText(file));
+            }
 
             if (server.ServerTwitchChannels == null)
+            {
                 server.ServerTwitchChannels = new List<string>();
+            }
 
             if (server.ServerTwitchChannelIds == null)
+            {
                 server.ServerTwitchChannelIds = new List<string>();
+            }
 
-            if (!string.IsNullOrEmpty(server.OwnerTwitchChannel) && server.OwnerTwitchChannel.ToLower().Equals(channelName.ToLower()))
+            if (!string.IsNullOrEmpty(server.OwnerTwitchChannel) && server.OwnerTwitchChannel.ToLowerInvariant().Equals(channelName.ToLowerInvariant()))
             {
                 await Context.Channel.SendMessageAsync("The channel " + channelName + " is configured as the Owner Twitch channel. " +
                     "Please remove it with the '!cb twitch resetowner' command and then try re-adding it.");
@@ -70,9 +77,9 @@ namespace MTD.DiscordBot.Modules
                 return;
             }
 
-            if (!server.ServerTwitchChannels.Contains(channelName.ToLower()))
+            if (!server.ServerTwitchChannels.Contains(channelName.ToLowerInvariant()))
             {
-                server.ServerTwitchChannels.Add(channelName.ToLower());
+                server.ServerTwitchChannels.Add(channelName.ToLowerInvariant());
                 server.ServerTwitchChannelIds.Add(await _twitchManager.GetTwitchIdByLogin(channelName));
                 await _fileService.SaveDiscordServer(server, Context.Guild);
 
@@ -96,16 +103,20 @@ namespace MTD.DiscordBot.Modules
             var server = new DiscordServer();
 
             if (File.Exists(file))
+            {
                 server = JsonConvert.DeserializeObject<DiscordServer>(File.ReadAllText(file));
+            }
 
             if (server.ServerTwitchChannels == null)
+            {
                 return;
+            }
 
-            if (server.ServerTwitchChannels.Contains(channel.ToLower()))
+            if (server.ServerTwitchChannels.Contains(channel.ToLowerInvariant()))
             {
                 var twitchId = await _twitchManager.GetTwitchIdByLogin(channel);
 
-                server.ServerTwitchChannels.Remove(channel.ToLower());
+                server.ServerTwitchChannels.Remove(channel.ToLowerInvariant());
                 server.ServerTwitchChannelIds.Remove(twitchId);
                 await _fileService.SaveDiscordServer(server, Context.Guild);
 
@@ -138,9 +149,11 @@ namespace MTD.DiscordBot.Modules
             var server = new DiscordServer();
 
             if (File.Exists(file))
+            {
                 server = JsonConvert.DeserializeObject<DiscordServer>(File.ReadAllText(file));
+            }
 
-            if (server.ServerTwitchChannels != null && server.ServerTwitchChannels.Contains(channel.ToLower()))
+            if (server.ServerTwitchChannels != null && server.ServerTwitchChannels.Contains(channel.ToLowerInvariant()))
             {
                 await Context.Channel.SendMessageAsync("The channel " + channel + " is in the list of server Twitch Channels. " +
                     "Please remove it with '!cb twitch remove " + channel + "' and then retry setting your owner channel.");
@@ -166,7 +179,9 @@ namespace MTD.DiscordBot.Modules
             var server = new DiscordServer();
 
             if (File.Exists(file))
+            {
                 server = JsonConvert.DeserializeObject<DiscordServer>(File.ReadAllText(file));
+            }
 
             server.OwnerTwitchChannel = null;
             server.OwnerTwitchChannelId = null;
@@ -214,7 +229,7 @@ namespace MTD.DiscordBot.Modules
 
             var message = await _messagingService.BuildMessage(name, stream.game, stream.channel.status, url, avatarUrl,
                                                     thumbnailUrl, Constants.Twitch, stream.channel._id.ToString(), server, server.GoLiveChannel, null);
-            await _messagingService.SendMessages(Constants.Twitch, new List<BroadcastMessage>() { message });
+            await _messagingService.SendMessages(Constants.Twitch, new List<BroadcastMessage> { message });
         }
 
         [Command("addgame")]
@@ -245,8 +260,6 @@ namespace MTD.DiscordBot.Modules
                 await Context.Channel.SendMessageAsync(gameName + " is not a valid game. Please check the name, and try again.");
                 return;
             }
-
-            var gameDASfasdf = games.games.FirstOrDefault(x => x.name.Equals(gameName, StringComparison.CurrentCultureIgnoreCase));
 
             if (games.games.FirstOrDefault(x => x.name.Equals(gameName, StringComparison.CurrentCultureIgnoreCase)) == null)
             {
@@ -478,22 +491,22 @@ namespace MTD.DiscordBot.Modules
         }
 
         [Command("discover")]
-        public async Task Discover(string discover)
+        public async Task Discover(string discoveryType)
         {
-            discover = discover.ToLower();
+            discoveryType = discoveryType.ToLowerInvariant();
 
             if (!IsAdmin)
             {
                 return;
             }
 
-            if(discover != "all" && discover != "none" && discover != "role")
+            if(discoveryType != "all" && discoveryType != "none" && discoveryType != "role")
             {
                 await Context.Channel.SendMessageAsync("The twitch discover command syntax is: ```!cb twitch discover [all/none/role] {roleName}\r\nPick one - all, none, or role.\r\nIf role, provide the role name to use. Do not tag the role, just provide the name.\r\n```");
                 return;
             }
 
-            if(discover == "role")
+            if(discoveryType == "role")
             {
                 await Context.Channel.SendMessageAsync("Please provide the role name when selecting role as your discover option. (ie: !cb twitch discover role streamers. Do not tag the role.)");
                 return;
@@ -507,28 +520,28 @@ namespace MTD.DiscordBot.Modules
                 server = JsonConvert.DeserializeObject<DiscordServer>(File.ReadAllText(file));
             }
 
-            server.DiscoverTwitch = discover;
+            server.DiscoverTwitch = discoveryType;
             await _fileService.SaveDiscordServer(server, Context.Guild);
-            await Context.Channel.SendMessageAsync("Discover Twitch has been set to '" + discover + "'.");
+            await Context.Channel.SendMessageAsync("Discover Twitch has been set to '" + discoveryType + "'.");
         }
 
         [Command("discover")]
-        public async Task Discover(string discover, string roleName)
+        public async Task Discover(string discoveryType, string roleName)
         {
-            discover = discover.ToLower();
+            discoveryType = discoveryType.ToLowerInvariant();
             
             if (!IsAdmin)
             {
                 return;
             }
 
-            if (discover != "all" && discover != "none" && discover != "role")
+            if (discoveryType != "all" && discoveryType != "none" && discoveryType != "role")
             {
                 await Context.Channel.SendMessageAsync("The twitch discover command syntax is: ```!cb twitch discover [all/none/role] {roleName}\r\nPick one - all, none, or role.\r\nIf role, provide the role name to use. Do not tag the role, just provide the name.\r\n```");
                 return;
             }
 
-            if (discover == "role" && string.IsNullOrEmpty(roleName))
+            if (discoveryType == "role" && string.IsNullOrEmpty(roleName))
             {
                 await Context.Channel.SendMessageAsync("Please provide the role name when selecting role as your discover option. (ie: !cb twitch discover role streamers. Do not tag the role.)");
                 return;
@@ -550,10 +563,10 @@ namespace MTD.DiscordBot.Modules
                 server = JsonConvert.DeserializeObject<DiscordServer>(File.ReadAllText(file));
             }
 
-            server.DiscoverTwitch = discover;
+            server.DiscoverTwitch = discoveryType;
             server.DiscoverTwitchRole = role.Id;
             await _fileService.SaveDiscordServer(server, Context.Guild);
-            await Context.Channel.SendMessageAsync("Discover Twitch has been set to '" + discover + "' with the role '" + roleName + "'.");
+            await Context.Channel.SendMessageAsync("Discover Twitch has been set to '" + discoveryType + "' with the role '" + roleName + "'.");
         }
     }
 }
