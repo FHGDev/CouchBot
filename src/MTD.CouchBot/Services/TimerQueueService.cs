@@ -66,7 +66,7 @@ namespace MTD.CouchBot.Services
         {
             if (_botSettings.PlatformSettings.EnableMixer)
             {
-                await ResubscribeToBeamEvents();
+                await _mixerService.ResubscribeToBeamEvents();
                 QueueBeamClientCheck();
             }
 
@@ -106,59 +106,6 @@ namespace MTD.CouchBot.Services
             QueueHealthChecks();
         }
 
-        public async Task ResubscribeToBeamEvents()
-        {
-            var count = 0;
-            var alreadyProcessed = new List<string>();
-
-            Logging.LogMixer("Getting Server Files.");
-
-            var servers = _fileService.GetConfiguredServers().Where(x => x.ServerBeamChannelIds != null && x.ServerBeamChannelIds.Count > 0);
-
-            await Task.Run(async () =>
-            {   
-                Logging.LogMixer("Connecting to Mixer Constellation.");
-
-                await _mixerService.RunWebSockets();
-
-                Logging.LogMixer("Connected to Mixer Constellation.");
-            });
-
-
-            Logging.LogMixer("Initiating Subscription Loop.");
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-
-            if (servers != null && servers.Count() > 0)
-            {
-                foreach (var s in servers)
-                {
-                    foreach (var b in s.ServerBeamChannelIds)
-                    {
-                        if (!alreadyProcessed.Contains(b))
-                        {
-                            await _mixerService.SubscribeToLiveAnnouncements(b);
-                            count++;
-                            alreadyProcessed.Add(b);
-                        }
-                    }
-
-                    if (!string.IsNullOrEmpty(s.OwnerBeamChannelId))
-                    {
-                        if (!alreadyProcessed.Contains(s.OwnerBeamChannelId))
-                        {
-                            await _mixerService.SubscribeToLiveAnnouncements(s.OwnerBeamChannelId);
-                            count++;
-                            alreadyProcessed.Add(s.OwnerBeamChannelId);
-                        }
-                    }
-                }
-            }
-
-            sw.Stop();
-            Logging.LogMixer("Subscription Loop Complete. Processed " + count + " channels in " + sw.ElapsedMilliseconds + " milliseconds.");
-        }
-
         public void QueueBeamClientCheck()
         {
             _mixerPingTimer = new Timer(async (e) =>
@@ -167,34 +114,6 @@ namespace MTD.CouchBot.Services
                 await _mixerService.Ping();
             }, null, 0, 10000);
 
-            _beamClientTimer = new Timer(async (e) =>
-            {
-                var metrics = new PerformanceMetrics();
-                metrics.CreatedDate = DateTime.UtcNow;
-                metrics.IsOwner = false;
-                metrics.Platform = Constants.Mixer + " - Health Check";
-                metrics.ScheduledInterval = 60000;
-
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
-                Logging.LogMixer("Mixer Constellation Health Check Started.");
-
-                Logging.LogMixer("Current Mixer Status: " + _mixerService.Status());
-                if (_mixerService.Status() != WebSocketState.Open)
-                {
-                    Logging.LogMixer("State not open. Resubscribing.");
-                    await ResubscribeToBeamEvents();
-                }
-                else
-                {
-                    Logging.LogMixer("" + _mixerService.Status());
-                }
-
-                sw.Stop();
-                metrics.RunTime = sw.ElapsedMilliseconds;
-                await _loggingManager.LogPerformance(metrics);
-                Logging.LogMixer("Mixer Constellation Health Check Complete - Elapsed Runtime: " + sw.ElapsedMilliseconds + " milliseconds.");
-            }, null, 0, 60000);
         }
 
         public void QueueHitboxChecks()

@@ -8,6 +8,7 @@ using MTD.CouchBot.Models.Bot;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.WebSockets;
@@ -45,7 +46,15 @@ namespace MTD.CouchBot.Services
 
         public async Task RunWebSockets()
         {
-            if (client.State == WebSocketState.None || client.State == WebSocketState.Closed || client.State == WebSocketState.Aborted)
+            if(client.State == WebSocketState.Aborted)
+            {
+                client.Dispose();
+                client = new ClientWebSocket();
+            }
+
+            if (client.State == WebSocketState.None || 
+                client.State == WebSocketState.Closed || 
+                client.State == WebSocketState.Aborted)
             {
                 try
                 {
@@ -114,7 +123,15 @@ namespace MTD.CouchBot.Services
 
             try
             {
-                await client.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
+                if (client.State == WebSocketState.Open)
+                {
+                    await client.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
+                }
+                else
+                {
+                    await RunWebSockets();
+                    await ResubscribeToBeamEvents();
+                }
             }
             catch (Exception ex)
             {
@@ -128,7 +145,15 @@ namespace MTD.CouchBot.Services
 
             var bytes = Encoding.UTF8.GetBytes(unsubscribe);
 
-            await client.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
+            if (client.State == WebSocketState.Open)
+            {
+                await client.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
+            }
+            else
+            {
+                await RunWebSockets();
+                await ResubscribeToBeamEvents();
+            }
         }
 
         private int GetRandomInt()
@@ -145,7 +170,15 @@ namespace MTD.CouchBot.Services
 
             try
             {
-                await client.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
+                if (client.State == WebSocketState.Open)
+                {
+                    await client.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
+                }
+                else
+                {
+                    await RunWebSockets();
+                    await ResubscribeToBeamEvents();
+                }
             }
             catch (Exception ex)
             {
@@ -282,6 +315,61 @@ namespace MTD.CouchBot.Services
 
                 _fileService.DeleteLiveBeamChannel(beamId);
             }
+        }
+
+        public async Task ResubscribeToBeamEvents()
+        {
+            var count = 0;
+            var alreadyProcessed = new List<string>();
+
+            Logging.LogMixer("Getting Server Files.");
+
+            var servers = _fileService.GetConfiguredServers().Where(x => x.ServerBeamChannelIds != null && x.ServerBeamChannelIds.Count > 0);
+
+            if (client.State != WebSocketState.Open)
+            {
+                await Task.Run(async () =>
+                {
+                    Logging.LogMixer("Connecting to Mixer Constellation.");
+
+                    await RunWebSockets();
+
+                    Logging.LogMixer("Connected to Mixer Constellation.");
+                });
+            }
+
+            Logging.LogMixer("Initiating Subscription Loop.");
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
+            if (servers != null && servers.Count() > 0)
+            {
+                foreach (var s in servers)
+                {
+                    foreach (var b in s.ServerBeamChannelIds)
+                    {
+                        if (!alreadyProcessed.Contains(b))
+                        {
+                            await SubscribeToLiveAnnouncements(b);
+                            count++;
+                            alreadyProcessed.Add(b);
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(s.OwnerBeamChannelId))
+                    {
+                        if (!alreadyProcessed.Contains(s.OwnerBeamChannelId))
+                        {
+                            await SubscribeToLiveAnnouncements(s.OwnerBeamChannelId);
+                            count++;
+                            alreadyProcessed.Add(s.OwnerBeamChannelId);
+                        }
+                    }
+                }
+            }
+
+            sw.Stop();
+            Logging.LogMixer("Subscription Loop Complete. Processed " + count + " channels in " + sw.ElapsedMilliseconds + " milliseconds.");
         }
     }
 }

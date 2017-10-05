@@ -238,5 +238,38 @@ namespace MTD.CouchBot.Modules
             await _fileService.SaveDiscordServer(server, Context.Guild);
             await Context.Channel.SendMessageAsync("Allow owner channel feed has been set to: " + trueFalse);
         }
+
+        [Command("all")]
+        public async Task All(string trueFalse)
+        {
+            var guild = ((IGuildUser)Context.Message.Author).Guild;
+            var user = ((IGuildUser)Context.Message.Author);
+
+            if (!user.GuildPermissions.ManageGuild)
+            {
+                return;
+            }
+
+            trueFalse = trueFalse.ToLower();
+            if (!trueFalse.Equals("true") && !trueFalse.Equals("false"))
+            {
+                await Context.Channel.SendMessageAsync("Pass true or false when configuring allow all. (ie: !cb allow all true)");
+                return;
+            }
+
+            var file = _botSettings.DirectorySettings.ConfigRootDirectory + _botSettings.DirectorySettings.GuildDirectory + guild.Id + ".json";
+            var server = new DiscordServer();
+
+            if (File.Exists(file))
+            {
+                server = JsonConvert.DeserializeObject<DiscordServer>(File.ReadAllText(file));
+            }
+
+            server.AllowLive = bool.Parse(trueFalse);
+            server.AllowPublished = bool.Parse(trueFalse);
+
+            await _fileService.SaveDiscordServer(server, Context.Guild);
+            await Context.Channel.SendMessageAsync("Allow all (Live and Published) has been set to: " + trueFalse);
+        }
     }
 }
