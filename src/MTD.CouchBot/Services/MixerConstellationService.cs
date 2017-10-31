@@ -237,7 +237,7 @@ namespace MTD.CouchBot.Services
                         string channelId = stream.id.Value.ToString();
 
                         messages.Add(await _messagingService.BuildMessage(stream.token, gameName, stream.name, url, avatarUrl, thumbnailUrl,
-                            Constants.Mixer, channelId, server, server.GoLiveChannel, null));
+                            Constants.Mixer, channelId, server, server.GoLiveChannel, null, false));
                     }
                 }
             }
@@ -256,7 +256,7 @@ namespace MTD.CouchBot.Services
                         string channelId = stream.id.Value.ToString();
 
                         messages.Add(await _messagingService.BuildMessage(stream.token, gameName, stream.name, url, avatarUrl, thumbnailUrl,
-                            Constants.Mixer, channelId, server, server.OwnerLiveChannel, null));
+                            Constants.Mixer, channelId, server, server.OwnerLiveChannel, null, true));
                     }
                 }
             }

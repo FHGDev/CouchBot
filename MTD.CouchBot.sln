@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MTD.CouchBot.Domain", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MTD.CouchBot.Managers", "src\MTD.CouchBot.Managers\MTD.CouchBot.Managers.csproj", "{B16A90E4-14F4-456E-B2FF-1C297DC09963}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MTD.CouchBot.Webhooks", "src\MTD.CouchBot.Webhooks\MTD.CouchBot.Webhooks.csproj", "{182C1B3B-FBD3-4CCF-B9C0-AF77C7577461}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,10 +37,6 @@ Global
 		{B16A90E4-14F4-456E-B2FF-1C297DC09963}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B16A90E4-14F4-456E-B2FF-1C297DC09963}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B16A90E4-14F4-456E-B2FF-1C297DC09963}.Release|Any CPU.Build.0 = Release|Any CPU
-		{182C1B3B-FBD3-4CCF-B9C0-AF77C7577461}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{182C1B3B-FBD3-4CCF-B9C0-AF77C7577461}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{182C1B3B-FBD3-4CCF-B9C0-AF77C7577461}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{182C1B3B-FBD3-4CCF-B9C0-AF77C7577461}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,6 +46,5 @@ Global
 		{7F3B3194-119E-4F3A-8469-1A67B9B468C6} = {07372122-F996-42B3-9106-1F3C6CA4E479}
 		{79B9A70D-E65C-44DF-8383-AF8EFEFB3F21} = {07372122-F996-42B3-9106-1F3C6CA4E479}
 		{B16A90E4-14F4-456E-B2FF-1C297DC09963} = {07372122-F996-42B3-9106-1F3C6CA4E479}
-		{182C1B3B-FBD3-4CCF-B9C0-AF77C7577461} = {07372122-F996-42B3-9106-1F3C6CA4E479}
 	EndGlobalSection
 EndGlobal

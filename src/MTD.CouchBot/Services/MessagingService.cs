@@ -220,7 +220,7 @@ namespace MTD.CouchBot.Services
 
         public async Task<BroadcastMessage> BuildMessage(string channel,
             string gameName, string title, string url, string avatarUrl, string thumbnailUrl, string platform,
-            string channelId, DiscordServer server, ulong discordChannelId, string teamName)
+            string channelId, DiscordServer server, ulong discordChannelId, string teamName, bool owner)
         {
             EmbedBuilder embed = new EmbedBuilder();
             EmbedAuthorBuilder author = new EmbedAuthorBuilder();
@@ -237,6 +237,8 @@ namespace MTD.CouchBot.Services
             footer.Text = "[" + platform + "] - " + DateTime.UtcNow.AddHours(server.TimeZoneOffset);
             embed.Author = author;
 
+            bool allowEveryone = false;
+
             if (platform.Equals(Constants.Mixer))
             {
                 embed.Color = Constants.Blue;
@@ -244,12 +246,14 @@ namespace MTD.CouchBot.Services
                         avatarUrl + "?_=" + Guid.NewGuid().ToString().Replace("-", "") :
                         "https://mixer.com/_latest/assets/images/main/avatars/default.jpg";
                 footer.IconUrl = "http://couchbot.io/img/beam.jpg";
+                allowEveryone = owner ? server.AllowMentionOwnerMixerLive : server.AllowMentionMixerLive;
             }
             else if (platform.Equals(Constants.YouTubeGaming))
             {
                 embed.Color = Constants.Red;
                 embed.ThumbnailUrl = avatarUrl + "?_=" + Guid.NewGuid().ToString().Replace("-", "");
                 footer.IconUrl = "http://couchbot.io/img/ytg.jpg";
+                allowEveryone = owner ? server.AllowMentionOwnerYouTubeLive : server.AllowMentionYouTubeLive;
             }
             else if (platform.Equals(Constants.Twitch))
             {
@@ -258,18 +262,21 @@ namespace MTD.CouchBot.Services
                         avatarUrl + "?_=" + Guid.NewGuid().ToString().Replace("-", "") :
                         "https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_70x70.png";
                 footer.IconUrl = "http://couchbot.io/img/twitch.jpg";
+                allowEveryone = owner ? server.AllowMentionOwnerTwitchLive : server.AllowMentionTwitchLive;
             }
             else if (platform.Equals(Constants.Smashcast))
             {
                 embed.Color = Constants.Green;
                 embed.ThumbnailUrl = avatarUrl + "?_=" + Guid.NewGuid().ToString().Replace("-", "");
                 footer.IconUrl = "http://couchbot.io/img/smashcast.png";
+                allowEveryone = owner ? server.AllowMentionOwnerSmashcastLive : server.AllowMentionSmashcastLive;
             }
             else if (platform.Equals(Constants.Mobcrush))
             {
                 embed.Color = Constants.Yellow;
                 embed.ThumbnailUrl = avatarUrl + "?_=" + Guid.NewGuid().ToString().Replace("-", "");
                 footer.IconUrl = "http://couchbot.io/img/mobcrush.jpg";
+                allowEveryone = owner ? server.AllowMentionOwnerMobcrushLive : server.AllowMentionMobcrushLive;
             }
 
             embed.Description = server.LiveMessage
@@ -302,7 +309,7 @@ namespace MTD.CouchBot.Services
                 roleName = role.Mention;
             }
 
-            var message = (server.AllowEveryone ? roleName + " " : "");
+            var message = (allowEveryone ? roleName + " " : "");
 
             if (server.UseTextAnnouncements)
             {

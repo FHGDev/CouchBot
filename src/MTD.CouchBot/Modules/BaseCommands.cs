@@ -46,6 +46,7 @@ namespace MTD.CouchBot.Modules
             var serverTwitchCount = 0;
             var serverYouTubeCount = 0;
             var serverBeamCount = 0;
+            var serverMobcrushCount = 0;
             var serverHitboxCount = 0;
             var serverPicartoCount = 0;
             var twitchGameCount = 0;
@@ -80,6 +81,19 @@ namespace MTD.CouchBot.Modules
                 if (!string.IsNullOrEmpty(server.OwnerBeamChannel))
                 {
                     serverBeamCount++;
+                }
+
+                if (server.ServerMobcrushIds != null)
+                {
+                    foreach (var u in server.ServerMobcrushIds)
+                    {
+                        serverMobcrushCount++;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(server.OwnerMobcrushId))
+                {
+                    serverMobcrushCount++;
                 }
 
                 if (server.ServerTwitchChannelIds != null)
@@ -165,6 +179,7 @@ namespace MTD.CouchBot.Modules
                           "- Connected Servers: " + serverCount + "\r\n" +
                           "Platforms: \r\n" +
                           "-- Mixer: " + serverBeamCount + "\r\n" +
+                          "-- Mobcrush: " + serverMobcrushCount + "\r\n" +
                           "-- Picarto: " + serverPicartoCount + "\r\n" +
                           "-- Smashcast: " + serverHitboxCount + "\r\n" +
                           "-- Twitch: " + serverTwitchCount + "\r\n" +
@@ -175,7 +190,7 @@ namespace MTD.CouchBot.Modules
                           "-- Total Channels Checked: " + (serverYouTubeCount + serverTwitchCount + serverBeamCount + serverHitboxCount + serverPicartoCount) + "\r\n" +
                           "- Current Memory Usage: " + ((System.Diagnostics.Process.GetCurrentProcess().WorkingSet64 / 1024) / 1024) + "MB \r\n" +
                           "- Built on Discord.Net - (https://github.com/RogueException/Discord.Net)\r\n" +
-                          "- Developed and Maintained by Dawgeth - (http://twitter.com/dawgeth)\r\n" +
+                          "- Developed and Maintained by Matt - (http://twitter.com/mattthedev)\r\n" +
                           "- Want to submit feedback, a bug, or suggestion? - (http://github.com/dawgeth/couchbot/issues)\r\n" +
                           "- Join us on Discord!-(http://discord.couchbot.io)\r\n" +
                           "```\r\n";
@@ -336,7 +351,7 @@ namespace MTD.CouchBot.Modules
 
             string info = "```Markdown\r\n" +
                           "# " + _discord.CurrentUser.Username + " Supporters\r\n" +
-                          "I wanted to create a place to show my thanks to everyone that supports the development and growth of " + _discord.CurrentUser.Username + ", whether it be via <http://patreon.com/dawgeth>, or " +
+                          "I wanted to create a place to show my thanks to everyone that supports the development and growth of " + _discord.CurrentUser.Username + ", whether it be via <http://patreon.com/mattthedev>, or " +
                           "just in it's use. Thanks to all those out there that have used it, provided feedback, found bugs, and supported me through Patreon.\r\n\r\n" +
                           "Patron List:\r\n";
 
@@ -345,7 +360,7 @@ namespace MTD.CouchBot.Modules
                 info += "- " + s + "\r\n";
             }
 
-            info += "- Your Name Could Be Here. Visit <http://patreon.com/dawgeth> today <3" +
+            info += "- Your Name Could Be Here. Visit <http://patreon.com/mattthedev> today <3" +
                      "- Want to be a one time supporter? <http://paypal.me/dawgeth>" +
                      "```\r\n";
 
@@ -425,14 +440,14 @@ namespace MTD.CouchBot.Modules
         [Command("setbotgame")]
         public async Task SetBotGame(string game)
         {
-            if (Context.User.Id != 93015586698727424)
+            if (!IsDeveloper)
             {
-                await Context.Channel.SendMessageAsync("*Bbbbbzzztttt* You are not *zzzzt* Dawgeth. Acc *bbrrrttt* Access Denied.");
+                await Context.Channel.SendMessageAsync("*Bbbbbzzztttt* You are not *zzzzt* Matt. Acc *bbrrrttt* Access Denied.");
 
                 return;
             }
-
-            await _discord.SetGameAsync(game, "", StreamType.NotStreaming);
+            await (Context.Client as DiscordShardedClient).SetGameAsync(game, null, StreamType.NotStreaming);
+            //await _discord.SetGameAsync(game, "", StreamType.NotStreaming);
         }
 
         [Command("permissions"), Summary("Check bot permissions.")]
@@ -476,7 +491,7 @@ namespace MTD.CouchBot.Modules
             {
                 message = message.Replace("@everyone", "@ everyone").Replace("@here", "@ here");
             }
-
+            
             await Context.Channel.SendMessageAsync(StringUtilities.ScrubChatMessage(message));
         }
 
@@ -858,6 +873,89 @@ namespace MTD.CouchBot.Modules
             eb.AddField("Bots", botCount, true);
 
             await Context.Channel.SendMessageAsync("", false, eb.Build());
+        }
+
+        [Command("role")]
+        public async Task Role(string roleName)
+        {
+            if(Context.Guild.Id != 263688866978988032)
+            {
+                return;
+            }
+
+            var roleNameLower = roleName.ToLower();
+
+            if(!roleNameLower.Equals("youtube") && !roleNameLower.Equals("twitch") && !roleNameLower.Equals("mixer") && !roleNameLower.Equals("picarto") &&
+                !roleNameLower.Equals("smashcast") && !roleNameLower.Equals("vidme") && !roleNameLower.Equals("mobcrush"))
+            {
+                await Context.Channel.SendMessageAsync("Invalid role. Provide one of the following: mixer, mobcrush, picarto, smashcast, twitch, youtube, or vidme.");
+
+                return;
+            }
+
+            var user = ((IGuildUser)(Context.User));
+            var mixerRole = Context.Guild.Roles.FirstOrDefault(r => r.Name.Equals("mixer", StringComparison.CurrentCultureIgnoreCase));
+            var mobcrushRole = Context.Guild.Roles.FirstOrDefault(r => r.Name.Equals("mobcrush", StringComparison.CurrentCultureIgnoreCase));
+            var picartoRole = Context.Guild.Roles.FirstOrDefault(r => r.Name.Equals("picarto", StringComparison.CurrentCultureIgnoreCase));
+            var smashcastRole = Context.Guild.Roles.FirstOrDefault(r => r.Name.Equals("smashcast", StringComparison.CurrentCultureIgnoreCase));
+            var twitchRole = Context.Guild.Roles.FirstOrDefault(r => r.Name.Equals("twitch", StringComparison.CurrentCultureIgnoreCase));
+            var youtubeRole = Context.Guild.Roles.FirstOrDefault(r => r.Name.Equals("youtube", StringComparison.CurrentCultureIgnoreCase));
+            var vidmeRole = Context.Guild.Roles.FirstOrDefault(r => r.Name.Equals("vid.me", StringComparison.CurrentCultureIgnoreCase));
+
+            switch (roleNameLower)
+            {
+                case "youtube":
+                    await user.AddRoleAsync(youtubeRole);
+                    break;
+                case "twitch":
+                    await user.AddRoleAsync(twitchRole);
+                    break;
+                case "mixer":
+                    await user.AddRoleAsync(mixerRole);
+                    break;
+                case "picarto":
+                    await user.AddRoleAsync(picartoRole);
+                    break;
+                case "smashcast":
+                    await user.AddRoleAsync(smashcastRole);
+                    break;
+                case "vidme":
+                    await user.AddRoleAsync(vidmeRole);
+                    break;
+                case "mobcrush":
+                    await user.AddRoleAsync(mobcrushRole);
+                    break;
+            }
+
+            await Context.Channel.SendMessageAsync("You were added to the " + roleName + " role.");
+        }
+
+        [Command("leave")]
+        public async Task Leave(ulong serverId)
+        {
+            if (!IsDeveloper)
+            {
+                await Context.Channel.SendMessageAsync("*Bbbbbzzztttt* You are not *zzzzt* Matt. Acc *bbrrrttt* Access Denied.");
+
+                return;
+            }
+
+            await _discord.GetGuild(serverId).LeaveAsync();
+        }
+
+        [Command("purgenothingservers")]
+        public async Task PurgeNothingServers()
+        {
+            if (!IsDeveloper)
+            {
+                await Context.Channel.SendMessageAsync("*Bbbbbzzztttt* You are not *zzzzt* Matt. Acc *bbrrrttt* Access Denied.");
+
+                return;
+            }
+
+            var servers = _fileService.GetServersWithNoChannelsSet();
+
+            await Context.Channel.SendMessageAsync("Total Servers That Would Be Removed: " + servers.Count);
         }
     }
 }

@@ -196,7 +196,7 @@ namespace MTD.DiscordBot.Modules
                 string thumbnailUrl = "http://edge.sf.hitbox.tv" + stream.livestream[0].media_thumbnail_large;
 
                 var message = await _messagingService.BuildMessage(channelName, gameName, stream.livestream[0].media_status,
-                    url, avatarUrl, thumbnailUrl, Constants.Smashcast, channelName, server, server.GoLiveChannel, null);
+                    url, avatarUrl, thumbnailUrl, Constants.Smashcast, channelName, server, server.GoLiveChannel, null, false);
                 await _messagingService.SendMessages(Constants.Smashcast, new List<BroadcastMessage>() { message });
             }
             else

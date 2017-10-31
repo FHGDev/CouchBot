@@ -148,7 +148,7 @@ namespace MTD.CouchBot.Services
 
                                             var message = await _messagingService.BuildMessage(
                                                 user.Username, gameName, stream.Title, url, avatarUrl, thumbnailUrl, Constants.Mobcrush,
-                                                mobcrushId, server, server.GoLiveChannel, null);
+                                                mobcrushId, server, server.GoLiveChannel, null, false);
 
                                             var finalCheck = _fileService.GetCurrentlyLiveMobcrushChannels().FirstOrDefault(x => x.Name == mobcrushId);
 
@@ -256,7 +256,7 @@ namespace MTD.CouchBot.Services
 
                                         var message = await _messagingService.BuildMessage(
                                                 user.Username, gameName, stream.Title, url, avatarUrl, thumbnailUrl, Constants.Mobcrush,
-                                                server.OwnerMobcrushId, server, server.OwnerLiveChannel, null);
+                                                server.OwnerMobcrushId, server, server.OwnerLiveChannel, null, true);
 
                                         var finalCheck = _fileService.GetCurrentlyLiveMobcrushChannels().FirstOrDefault(x => x.Name == server.OwnerMobcrushId);
 
@@ -449,7 +449,7 @@ namespace MTD.CouchBot.Services
                                                 roleName = role.Mention;
                                             }
 
-                                            var message = (server.AllowEveryone ? roleName + " " : "");
+                                            var message = (server.AllowMentionPicartoLive ? roleName + " " : "");
 
                                             if (server.UseTextAnnouncements)
                                             {
@@ -644,7 +644,7 @@ namespace MTD.CouchBot.Services
                                             roleName = role.Mention;
                                         }
 
-                                        var message = (server.AllowEveryone ? roleName + " " : "");
+                                        var message = (server.AllowMentionOwnerPicartoLive ? roleName + " " : "");
 
                                         if (server.UseTextAnnouncements)
                                         {
@@ -774,7 +774,7 @@ namespace MTD.CouchBot.Services
                                             var message = await _messagingService.BuildMessage(
                                                 hitboxChannel, gameName, stream.livestream[0].media_status, url, "http://edge.sf.hitbox.tv" +
                                                 stream.livestream[0].channel.user_logo, "http://edge.sf.hitbox.tv" +
-                                                stream.livestream[0].media_thumbnail_large, Constants.Smashcast, hitboxChannel, server, server.GoLiveChannel, null);
+                                                stream.livestream[0].media_thumbnail_large, Constants.Smashcast, hitboxChannel, server, server.GoLiveChannel, null, false);
 
                                             var finalCheck = _fileService.GetCurrentlyLiveHitboxChannels().FirstOrDefault(x => x.Name == hitboxChannel);
 
@@ -879,7 +879,7 @@ namespace MTD.CouchBot.Services
                                         var message = await _messagingService.BuildMessage(
                                             server.OwnerHitboxChannel, gameName, stream.livestream[0].media_status, url, "http://edge.sf.hitbox.tv" +
                                             stream.livestream[0].channel.user_logo, "http://edge.sf.hitbox.tv" +
-                                            stream.livestream[0].media_thumbnail_large, Constants.Smashcast, server.OwnerHitboxChannel, server, server.OwnerLiveChannel, null);
+                                            stream.livestream[0].media_thumbnail_large, Constants.Smashcast, server.OwnerHitboxChannel, server, server.OwnerLiveChannel, null, true);
 
                                         var finalCheck = _fileService.GetCurrentlyLiveHitboxChannels().FirstOrDefault(x => x.Name == server.OwnerHitboxChannel);
 
@@ -1066,7 +1066,7 @@ namespace MTD.CouchBot.Services
                                     string thumbnailUrl = stream.preview.large;
 
                                     var message = await _messagingService.BuildMessage(channelName, stream.game, stream.channel.status, url, avatarUrl,
-                                        thumbnailUrl, Constants.Twitch, stream.channel._id.ToString(), server, s.IsOwner ? server.OwnerLiveChannel : server.GoLiveChannel, null);
+                                        thumbnailUrl, Constants.Twitch, stream.channel._id.ToString(), server, s.IsOwner ? server.OwnerLiveChannel : server.GoLiveChannel, null, s.IsOwner);
 
                                     var finalCheck = _fileService.GetCurrentlyLiveTwitchChannels().FirstOrDefault(x => x.Name == stream.channel._id.ToString());
 
@@ -1256,7 +1256,7 @@ namespace MTD.CouchBot.Services
                                         string thumbnailUrl = stream.preview.large;
 
                                         var message = await _messagingService.BuildMessage(channelName, stream.game, stream.channel.status, url, avatarUrl,
-                                            thumbnailUrl, Constants.Twitch, stream.channel._id.ToString(), server, server.GoLiveChannel, teamResponse.DisplayName);
+                                            thumbnailUrl, Constants.Twitch, stream.channel._id.ToString(), server, server.GoLiveChannel, teamResponse.DisplayName, false);
 
                                         var finalCheck = _fileService.GetCurrentlyLiveTwitchChannels().FirstOrDefault(x => x.Name == stream.channel._id.ToString());
 
@@ -1398,7 +1398,7 @@ namespace MTD.CouchBot.Services
                             string thumbnailUrl = stream.preview.large;
 
                             var message = await _messagingService.BuildMessage(channelName, stream.game, stream.channel.status, url, avatarUrl,
-                                thumbnailUrl, Constants.Twitch, stream.channel._id.ToString(), server, server.GoLiveChannel, null);
+                                thumbnailUrl, Constants.Twitch, stream.channel._id.ToString(), server, server.GoLiveChannel, null, false);
 
                             var finalCheck = _fileService.GetCurrentlyLiveTwitchChannels().FirstOrDefault(x => x.Name == stream.channel._id.ToString());
 
@@ -1535,7 +1535,7 @@ namespace MTD.CouchBot.Services
                     string thumbnailUrl = stream.preview.large;
 
                     var message = await _messagingService.BuildMessage(channelName, stream.game, stream.channel.status, url, avatarUrl,
-                        thumbnailUrl, Constants.Twitch, stream.channel._id.ToString(), server, server.GoLiveChannel, null);
+                        thumbnailUrl, Constants.Twitch, stream.channel._id.ToString(), server, server.GoLiveChannel, null, false);
 
                     var finalCheck = _fileService.GetCurrentlyLiveTwitchChannels().FirstOrDefault(x => x.Name == stream.channel._id.ToString());
 
@@ -1795,7 +1795,7 @@ namespace MTD.CouchBot.Services
 
                             var message = await _messagingService.BuildMessage(channelTitle, "a game", stream.snippet.title,
                                 url, avatarUrl, thumbnailUrl, Constants.YouTubeGaming, item.Snippet.ChannelId, server,
-                                s.IsOwner ? server.OwnerLiveChannel : server.GoLiveChannel, null);
+                                s.IsOwner ? server.OwnerLiveChannel : server.GoLiveChannel, null, s.IsOwner);
 
                             var finalCheck = _fileService.GetCurrentlyLiveYouTubeChannels().FirstOrDefault(x => x.Name == item.Snippet.ChannelId);
 
@@ -1958,7 +1958,7 @@ namespace MTD.CouchBot.Services
                             roleName = role.Mention;
                         }
 
-                        var message = (server.AllowEveryone ? roleName + " " : "");
+                        var message = (server.AllowMentionYouTubePublished ? roleName + " " : "");
 
                         if (server.UseTextAnnouncements)
                         {
@@ -2118,7 +2118,7 @@ namespace MTD.CouchBot.Services
                         roleName = role.Mention;
                     }
 
-                    var message = (server.AllowEveryone ? roleName + " " : "");
+                    var message = (server.AllowMentionOwnerYouTubePublished ? roleName + " " : "");
 
                     if (server.UseTextAnnouncements)
                     {
@@ -2319,7 +2319,7 @@ namespace MTD.CouchBot.Services
                             roleName = role.Mention;
                         }
 
-                        var message = (server.AllowEveryone ? roleName + " " : "");
+                        var message = (server.AllowMentionVidmePublished ? roleName + " " : "");
 
                         if (server.UseTextAnnouncements)
                         {
@@ -2472,7 +2472,7 @@ namespace MTD.CouchBot.Services
                         roleName = role.Mention;
                     }
 
-                    var message = (server.AllowEveryone ? roleName + " " : "");
+                    var message = (server.AllowMentionOwnerVidmePublished ? roleName + " " : "");
 
                     if (server.UseTextAnnouncements)
                     {

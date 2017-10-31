@@ -229,7 +229,7 @@ namespace MTD.DiscordBot.Modules
             string thumbnailUrl = stream.preview.large;
 
             var message = await _messagingService.BuildMessage(name, stream.game, stream.channel.status, url, avatarUrl,
-                                                    thumbnailUrl, Constants.Twitch, stream.channel._id.ToString(), server, server.GoLiveChannel, null);
+                                                    thumbnailUrl, Constants.Twitch, stream.channel._id.ToString(), server, server.GoLiveChannel, null, false);
             await _messagingService.SendMessages(Constants.Twitch, new List<BroadcastMessage> { message });
         }
 

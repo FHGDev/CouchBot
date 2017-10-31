@@ -341,5 +341,33 @@ namespace MTD.CouchBot.Services
         {
             File.Delete(_botSettings.DirectorySettings.ConfigRootDirectory + _botSettings.DirectorySettings.LiveDirectory + _botSettings.DirectorySettings.MixerDirectory + beamId + ".json");
         }
+
+        public List<DiscordServer> GetServersWithNoChannelsSet()
+        {
+            var servers = new List<DiscordServer>();
+
+            // Get Servers
+            foreach (var s in Directory.GetFiles(_botSettings.DirectorySettings.ConfigRootDirectory + _botSettings.DirectorySettings.GuildDirectory))
+            {
+                try
+                {
+                    var server = JsonConvert.DeserializeObject<DiscordServer>(File.ReadAllText(s));
+
+                    if(server.OwnerLiveChannel == 0 &&
+                        server.OwnerPublishedChannel == 0 &&
+                        server.GoLiveChannel == 0 &&
+                        server.PublishedChannel == 0)
+                    {
+                        servers.Add(server);
+                    }
+                }
+                catch (Exception)
+                {
+                    continue;
+                }
+            }
+
+            return servers;
+        }
     }
 }

@@ -52,5 +52,19 @@ namespace MTD.CouchBot.Modules
                 }
             }
         }
+        public bool IsDeveloper
+        {
+            get
+            {
+                var user = ((IGuildUser)Context.Message.Author);
+
+                if (user.Id != 93015586698727424)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+        }
     }
 }

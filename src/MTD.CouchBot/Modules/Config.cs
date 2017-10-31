@@ -144,7 +144,22 @@ namespace MTD.CouchBot.Modules
                               "- Go Live Channel: " + goliveChannel + "\r\n" +
                               "- Published Channel: " + vodChannel + "\r\n" +
                               "- Greetings Channel: " + greetingsChannel + "\r\n" +
-                              "- Allow @ Role: " + server.AllowEveryone + "\r\n" +
+                              "- Allow Mention Mixer Live: " + server.AllowMentionMixerLive + "\r\n" +
+                              "- Allow Mention Owner Mixer Live: " + server.AllowMentionOwnerMixerLive + "\r\n" +
+                              "- Allow Mention Mobcrush Live: " + server.AllowMentionMobcrushLive + "\r\n" +
+                              "- Allow Mention Owner Mobcrush Live: " + server.AllowMentionOwnerMobcrushLive + "\r\n" +
+                              "- Allow Mention Picarto Live: " + server.AllowMentionPicartoLive + "\r\n" +
+                              "- Allow Mention Owner Picarto Live: " + server.AllowMentionOwnerPicartoLive + "\r\n" +
+                              "- Allow Mention Smashcast Live: " + server.AllowMentionSmashcastLive + "\r\n" +
+                              "- Allow Mention Owner Smashcast Live: " + server.AllowMentionOwnerSmashcastLive + "\r\n" +
+                              "- Allow Mention Twitch Live: " + server.AllowMentionTwitchLive + "\r\n" +
+                              "- Allow Mention Owner Twitch Live: " + server.AllowMentionOwnerTwitchLive + "\r\n" +
+                              "- Allow Mention YouTube Live: " + server.AllowMentionYouTubeLive + "\r\n" +
+                              "- Allow Mention Owner YouTube Live: " + server.AllowMentionOwnerYouTubeLive + "\r\n" +
+                              "- Allow Mention YouTube Published: " + server.AllowMentionYouTubePublished + "\r\n" +
+                              "- Allow Mention Owner YouTube Published: " + server.AllowMentionOwnerYouTubePublished + "\r\n" +
+                              "- Allow Mention Vid.me Published: " + server.AllowMentionVidmePublished + "\r\n" +
+                              "- Allow Mention Owner Vid.me Published: " + server.AllowMentionOwnerVidmePublished + "\r\n" +
                               "- Allow Thumbnails: " + server.AllowThumbnails + "\r\n" +
                               "- Allow Greetings: " + server.Greetings + "\r\n" +
                               "- Allow Goodbyes: " + server.Goodbyes + "\r\n" +

@@ -32,7 +32,6 @@ namespace MTD.CouchBot.Domain.Models.Bot
         public bool Goodbyes { get; set; }
         public string GreetingMessage { get; set; }
         public string GoodbyeMessage { get; set; }
-        public bool AllowPublished { get; set; }
         public string PublishedMessage { get; set; }
         public string LiveMessage { get; set; }
         public bool UseYouTubeGamingPublished { get; set; }
@@ -40,6 +39,25 @@ namespace MTD.CouchBot.Domain.Models.Bot
         public bool DeleteWhenOffline { get; set; }
         public ulong MentionRole { get; set; }
         public bool AllowLive { get; set; }
+        public bool AllowPublished { get; set; }
+        public bool AllowMentionMixerLive               { get; set; } = true;
+        public bool AllowMentionMobcrushLive            { get; set; } = true;
+        public bool AllowMentionPicartoLive { get; set; } = true;
+        public bool AllowMentionSmashcastLive { get; set; } = true;
+
+        public bool AllowMentionTwitchLive              { get; set; } = true;
+        public bool AllowMentionYouTubeLive             { get; set; } = true;
+        public bool AllowMentionOwnerLive               { get; set; } = true;
+        public bool AllowMentionOwnerMixerLive          { get; set; } = true;
+        public bool AllowMentionOwnerMobcrushLive       { get; set; } = true;
+        public bool AllowMentionOwnerPicartoLive { get; set; } = true;
+        public bool AllowMentionOwnerSmashcastLive { get; set; } = true;
+        public bool AllowMentionOwnerTwitchLive         { get; set; } = true;
+        public bool AllowMentionOwnerYouTubeLive        { get; set; } = true;
+        public bool AllowMentionYouTubePublished        { get; set; } = true;
+        public bool AllowMentionVidmePublished          { get; set; } = true;
+        public bool AllowMentionOwnerYouTubePublished   { get; set; } = true;
+        public bool AllowMentionOwnerVidmePublished     { get; set; } = true;
         public string OwnerBeamChannel { get; set; }
         public string OwnerBeamChannelId { get; set; }
         public string OwnerHitboxChannel { get; set; }

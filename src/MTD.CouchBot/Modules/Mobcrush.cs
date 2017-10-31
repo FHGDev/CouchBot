@@ -237,7 +237,7 @@ namespace MTD.DiscordBot.Modules
                 string thumbnailUrl = "http://cdn.mobcrush.com/u/video/" + broadcast.Id + "/snapshot.jpg";
 
                 var message = await _messagingService.BuildMessage(channelName, gameName, "",
-                    url, avatarUrl, thumbnailUrl, Constants.Mobcrush, channelName, server, server.GoLiveChannel, null);
+                    url, avatarUrl, thumbnailUrl, Constants.Mobcrush, channelName, server, server.GoLiveChannel, null, false);
                 await _messagingService.SendMessages(Constants.Mobcrush, new List<BroadcastMessage> { message });
             }
             else

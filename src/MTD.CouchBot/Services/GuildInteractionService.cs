@@ -26,20 +26,69 @@ namespace MTD.CouchBot.Services
 
         public void Init()
         {
+            // Not needed. Initially ran to fix new data structure. Keeping just in case needed in future. FixGuilds();
+
             _discord.JoinedGuild += Client_JoinedGuild;
             _discord.LeftGuild += Client_LeftGuild;
             _discord.UserJoined += Client_UserJoined;
             _discord.UserLeft += Client_UserLeft;
         }
 
+        public void FixGuilds()
+        {
+            var files = _fileService.GetConfiguredServerPaths();
+            var badConfigurations = new List<DiscordServer>();
+
+            int count = 1;
+            foreach (var file in files)
+            {
+                Console.WriteLine("Processing " + count + " of " + files.Count);
+
+                var path = Path.GetFileNameWithoutExtension(file);
+                try
+                {
+                    var server = JsonConvert.DeserializeObject<DiscordServer>(File.ReadAllText(file));
+
+                    server.AllowMentionMixerLive = server.AllowEveryone;
+                    server.AllowMentionMobcrushLive = server.AllowEveryone;
+                    server.AllowMentionPicartoLive = server.AllowEveryone;
+                    server.AllowMentionSmashcastLive = server.AllowEveryone;
+                    server.AllowMentionTwitchLive = server.AllowEveryone;
+                    server.AllowMentionYouTubeLive = server.AllowEveryone;
+                    server.AllowMentionOwnerLive = server.AllowEveryone;
+                    server.AllowMentionOwnerMixerLive = server.AllowEveryone;
+                    server.AllowMentionOwnerMobcrushLive = server.AllowEveryone;
+                    server.AllowMentionOwnerPicartoLive = server.AllowEveryone;
+                    server.AllowMentionOwnerSmashcastLive = server.AllowEveryone;
+                    server.AllowMentionOwnerTwitchLive = server.AllowEveryone;
+                    server.AllowMentionOwnerYouTubeLive = server.AllowEveryone;
+                    server.AllowMentionYouTubePublished = server.AllowEveryone;
+                    server.AllowMentionVidmePublished = server.AllowEveryone;
+                    server.AllowMentionOwnerYouTubePublished = server.AllowEveryone;
+                    server.AllowMentionOwnerVidmePublished = server.AllowEveryone;
+
+                    _fileService.SaveDiscordServer(server);
+                }
+                catch (Exception ex)
+                {
+                    Logging.LogError("Error in CheckGuildConfigurations: " + ex.Message);
+                }
+                count++;
+            }
+        }
+
         public async Task Client_JoinedGuild(IGuild arg)
         {
             await CreateGuild(arg);
+
+            await SendJoinedEmbed(arg.Name, arg.Id, (await arg.GetOwnerAsync()).Username, (await arg.GetUsersAsync()).Count, arg.CreatedAt.DateTime, arg.IconUrl, _discord.Guilds.Count);
         }
 
         public async Task Client_LeftGuild(IGuild arg)
         {
             File.Delete(_botSettings.DirectorySettings.ConfigRootDirectory + _botSettings.DirectorySettings.GuildDirectory + arg.Id + ".json");
+
+            await SendLeftEmbed(arg.Name, arg.Id, (await arg.GetOwnerAsync()).Username, (await arg.GetUsersAsync()).Count, arg.CreatedAt.DateTime, arg.IconUrl, _discord.Guilds.Count);
         }
 
         private async Task Client_UserLeft(IGuildUser arg)
@@ -196,6 +245,54 @@ namespace MTD.CouchBot.Services
                     Logging.LogError("Error in CheckGuildConfigurations: " + ex.Message);
                 }
             }
+        }
+
+        public async Task SendJoinedEmbed(string serverName, ulong serverId, string ownerName, int userCount, DateTime createdDate, string iconUrl, int serverCount)
+        {
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.Title = "Log: Joined a New Server";
+            builder.Description = "Successfully joined a new server. Total Servers: " + serverCount;
+            builder.ThumbnailUrl = iconUrl;
+            
+            builder.AddField("Name", serverName, true);
+            builder.AddField("ID", serverId, true);
+            builder.AddField("Owner", ownerName, true);
+            builder.AddField("Members", userCount, true);
+            builder.AddField("Created", createdDate, true);
+
+            EmbedFooterBuilder fBuilder = new EmbedFooterBuilder();
+            fBuilder.IconUrl = _discord.CurrentUser.GetAvatarUrl();
+            fBuilder.Text = "Server Joined | " + DateTime.UtcNow;
+
+            builder.Footer = fBuilder;
+
+            var guild = _discord.GetGuild(263688866978988032);
+            var channel = (IMessageChannel) guild.GetChannel(359004669110124544);
+            await channel.SendMessageAsync("", false, builder.Build());
+        }
+
+        public async Task SendLeftEmbed(string serverName, ulong serverId, string ownerName, int userCount, DateTime createdDate, string iconUrl, int serverCount)
+        {
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.Title = "Log: Left a Server";
+            builder.Description = "Successfully left a server. Total Servers: " + serverCount;
+            builder.ThumbnailUrl = iconUrl;
+
+            builder.AddField("Name", serverName, true);
+            builder.AddField("ID", serverId, true);
+            builder.AddField("Owner", ownerName, true);
+            builder.AddField("Members", userCount, true);
+            builder.AddField("Created", createdDate, true);
+
+            EmbedFooterBuilder fBuilder = new EmbedFooterBuilder();
+            fBuilder.IconUrl = _discord.CurrentUser.GetAvatarUrl();
+            fBuilder.Text = "Server Left | " + DateTime.UtcNow;
+
+            builder.Footer = fBuilder;
+
+            var guild = _discord.GetGuild(263688866978988032);
+            var channel = (IMessageChannel)guild.GetChannel(359004669110124544);
+            await channel.SendMessageAsync("", false, builder.Build());
         }
     }
 }
